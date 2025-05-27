@@ -4,15 +4,15 @@ from contextlib import asynccontextmanager
 
 from app.database import init_db
 
-from app.routes.users import router as users_routers
-from app.routes.regions import router as regions_routers
-from app.routes.points import router as points_routers
-from app.routes.travels import router as travels_routers
+from app.handlers.users import router as users_routers
+from app.handlers.regions import router as regions_routers
+from app.handlers.points import router as points_routers
+from app.handlers.travels import router as travels_routers
 from app.test_data import router as test_data
 
-@asynccontextmanager
-async def lifespan(app: FastAPI):
-    yield
+# @asynccontextmanager
+# async def lifespan(app: FastAPI):
+#     yield
 
 app = FastAPI()
 

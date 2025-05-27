@@ -5,7 +5,8 @@ from sqlmodel import select
 
 from app.database import SessionDep
 from app.models.regions import Region
-from app.models.users import User, UserCreate, UserPublic, UserPublicWithRegion, UserUpdate
+from app.models.users import User
+from app.schemes.users import UserCreate, UserPublic, UserPublicWithRegion, UserUpdate
 
 router = APIRouter()
 

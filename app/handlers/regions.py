@@ -3,7 +3,8 @@ from sqlalchemy.orm import joinedload
 from sqlmodel import select
 
 from app.database import SessionDep
-from app.models.regions import Region, RegionPublic, RegionCreate, RegionPublicWithPoints
+from app.models.regions import Region
+from app.schemes.regions import RegionPublic, RegionCreate
 
 router = APIRouter()
 

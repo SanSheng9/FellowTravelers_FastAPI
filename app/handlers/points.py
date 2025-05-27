@@ -5,7 +5,8 @@ from sqlalchemy.orm import joinedload
 from sqlmodel import select
 
 from app.database import SessionDep
-from app.models.points import PointPublic, Point, PointCreate, PointPublicWithRegion
+from app.models.points import Point
+from app.schemes.points import PointPublic, PointCreate, PointPublicWithRegion
 
 router = APIRouter()
 

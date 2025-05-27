@@ -6,7 +6,8 @@ from sqlalchemy.orm import joinedload
 from sqlmodel import select
 
 from app.database import SessionDep
-from app.models.travels import Travel, TravelCreate, TravelPublic
+from app.models.travels import Travel, TravelUserLink
+from app.schemes.travels import TravelPublic, TravelCreate, TravelUserCreate, TravelUserPublic
 
 router = APIRouter()
 
@@ -53,9 +54,22 @@ def read_travels(session: SessionDep,
 
     return travels
 
-@router.get("/travels/{travels_id}", response_model=TravelPublic, tags=["travels"])
+@router.get("/travels/{travel_id}", response_model=TravelPublic, tags=["travels"])
 def read_travel(*, travel_id: int, session: SessionDep):
     travel = session.get(Travel, travel_id)
     if not travel:
         raise HTTPException(status_code=404, detail="Hero not found")
     return travel
+
+@router.post("/travels/{travel_id}/add_passenger/", response_model=TravelUserPublic, tags=["travels"])
+def add_passenger(travel_id: int, passenger: TravelUserCreate, session: SessionDep):
+    db_passenger = TravelUserLink(**passenger.model_dump(), travel_id=travel_id)
+    session.add(db_passenger)
+    session.commit()
+    session.refresh(db_passenger)
+    return db_passenger
+
+@router.get("/travels/{travel_id}/passengers/", response_model=list[TravelUserPublic], tags=["travels"])
+def read_passengers(travel_id: int, session: SessionDep):
+    passengers = session.exec(select(TravelUserLink).where(TravelUserLink.travel_id == travel_id)).all()
+    return passengers

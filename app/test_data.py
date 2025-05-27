@@ -5,7 +5,7 @@ from fastapi import APIRouter
 from app.database import SessionDep
 from app.models.points import Point
 from app.models.regions import Region
-from app.models.travels import Travel
+from app.models.travels import Travel, TravelUserLink
 from app.models.users import User
 
 router = APIRouter()
@@ -37,6 +37,7 @@ def create_test_data(session: SessionDep):
 
     user_1 = User(username="Vasilii228", chat_id="1", region=region_1)
     user_2 = User(username="Petya1337", chat_id="2", region=region_1)
+    user_2_1 = User(username="ProstoKissa", chat_id="21", region=region_1)
 
     user_3 = User(username="Masha_", chat_id="3", region=region_2)
     user_4 = User(username="Natasha_", chat_id="4", region=region_2)
@@ -46,6 +47,7 @@ def create_test_data(session: SessionDep):
 
     session.add(user_1)
     session.add(user_2)
+    session.add(user_2_1)
     session.add(user_3)
     session.add(user_4)
     session.add(user_5)
@@ -76,6 +78,18 @@ def create_test_data(session: SessionDep):
     session.add(travel_2)
     session.add(travel_3)
 
+    passenger_1 = TravelUserLink(
+        travel_id = 1,
+        user_id = 2,
+    )
+
+    passenger_2 = TravelUserLink(
+        travel_id = 1,
+        user_id = 3,
+    )
+
+    session.add(passenger_1)
+    session.add(passenger_2)
 
     session.commit()
 
