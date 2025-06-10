@@ -22,8 +22,8 @@ class Travel(SQLModel, table=True):
     id: int | None = Field(default=None, primary_key=True)
     date: datetime = Field(description="Дата поездки")
     status: StatusChoices = StatusChoices.PLANNED
-    number_of_available_seats: int = Field(default=0)
-    current_number_of_available_seats: int = Field(default=number_of_available_seats)
+    number_of_available_seats: int = Field(nullable=False)
+    current_number_of_available_seats: int = Field(nullable=False)
     starting_point_id: int = Field(default=None, foreign_key="point.id")
     end_point_id: int = Field(default=None, foreign_key="point.id")
     driver_id: int = Field(default=None, foreign_key="user.id")
@@ -52,4 +52,11 @@ class Travel(SQLModel, table=True):
         if self.starting_point_id == self.end_point_id:
             raise ValueError('The point of departure cannot be equal to the point of arrival. / Точка отправления не '
                              'может быть равна точке прибытия')
+        return self
+
+    @model_validator(mode='after')
+    def set_current_seats(self):
+        if self.number_of_available_seats is None:
+            raise ValueError("number_of_available_seats не может быть None")
+        self.current_number_of_available_seats = self.number_of_available_seats
         return self

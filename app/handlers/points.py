@@ -1,5 +1,3 @@
-from typing import Optional
-
 from fastapi import APIRouter, HTTPException
 from sqlalchemy.orm import joinedload
 from sqlmodel import select
@@ -19,16 +17,15 @@ def create_point(point: PointCreate, session: SessionDep):
     return db_point
 
 @router.get("/points/", response_model=list[PointPublicWithRegion], tags=["points"])
-def read_points(session: SessionDep, region_id: Optional[int] = None):
+def read_points(session: SessionDep):
     query = select(Point).join(Point.region).options(joinedload(Point.region))
-    if region_id is not None:
-        query = query.where(Point.region_id == region_id)
     points = session.exec(query).all()
     return points
 
 @router.get("/points/{point_id}", response_model=PointPublicWithRegion, tags=["points"])
 def read_point(*, point_id: int, session: SessionDep):
-    point = session.get(Point, point_id)
+    query = select(Point).options(joinedload(Point.region)).where(Point.id == point_id)
+    point = session.exec(query).first()
     if not point:
         raise HTTPException(status_code=404, detail="Hero not found")
     return point

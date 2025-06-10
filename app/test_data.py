@@ -57,21 +57,24 @@ def create_test_data(session: SessionDep):
                       starting_point=point_1,
                       end_point=point_2,
                       driver=user_1,
-                      number_of_available_seats=2
+                      number_of_available_seats=2,
+                      current_number_of_available_seats=2
                       )
 
     travel_2 = Travel(date=datetime(2025, 6, 11, 8, 30),
                       starting_point=point_3,
                       end_point=point_4,
                       driver=user_3,
-                      number_of_available_seats=3
+                      number_of_available_seats=3,
+                      current_number_of_available_seats=3
                       )
 
     travel_3 = Travel(date=datetime(2025, 6, 15, 14, 0),
                       starting_point=point_5,
                       end_point=point_6,
                       driver=user_5,
-                      number_of_available_seats=1
+                      number_of_available_seats=1,
+                      current_number_of_available_seats=1
                       )
 
     session.add(travel_1)

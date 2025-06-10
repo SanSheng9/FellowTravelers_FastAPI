@@ -39,14 +39,14 @@ def read_travels(session: SessionDep,
 
         travels = session.exec(
             select(Travel)
-            .where(Travel.starting_point_id == starting_point_id)
-            .where(Travel.end_point_id == end_point_id)
-            .where(func.date(Travel.date) == filter_date)
             .options(
                 joinedload(Travel.starting_point),
                 joinedload(Travel.end_point),
                 joinedload(Travel.driver)
             )
+            .where(Travel.starting_point_id == starting_point_id)
+            .where(Travel.end_point_id == end_point_id)
+            .where(func.date(Travel.date) == filter_date)
         ).all()
 
     else:
@@ -55,7 +55,7 @@ def read_travels(session: SessionDep,
     return travels
 
 @router.get("/travels/{travel_id}", response_model=TravelPublic, tags=["travels"])
-def read_travel(*, travel_id: int, session: SessionDep):
+def read_travel(travel_id: int, session: SessionDep):
     travel = session.get(Travel, travel_id)
     if not travel:
         raise HTTPException(status_code=404, detail="Hero not found")

@@ -1,6 +1,7 @@
 from typing import Optional
 
 from fastapi import APIRouter, HTTPException
+from sqlalchemy.orm import joinedload
 from sqlmodel import select
 
 from app.database import SessionDep
@@ -18,9 +19,9 @@ def create_user(user: UserCreate, session: SessionDep):
     session.refresh(db_user)
     return db_user
 
-@router.get("/users/", response_model=list[UserPublic], tags=["users"])
+@router.get("/users/", response_model=list[UserPublicWithRegion], tags=["users"])
 def read_users(session: SessionDep, chat_id: Optional[int] = None):
-    query = select(User)
+    query = select(User).options(joinedload(User.region))
     if chat_id is not None:
         query = query.where(User.chat_id == chat_id)
     users = session.exec(query).all()
@@ -28,7 +29,10 @@ def read_users(session: SessionDep, chat_id: Optional[int] = None):
 
 @router.get("/users/{user_id}", response_model=UserPublicWithRegion, tags=["users"])
 def read_user(user_id: int, session: SessionDep):
-    user = session.get(User, user_id)
+    query = select(User).options(joinedload(User.region)).where(User.id == user_id)
+    user = session.exec(query).first()
+
+    # user = session.get(User, user_id)
     if not user:
         raise HTTPException(status_code=404, detail="User not found")
     return user
