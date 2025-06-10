@@ -61,10 +61,28 @@ def read_travel(travel_id: int, session: SessionDep):
         raise HTTPException(status_code=404, detail="Hero not found")
     return travel
 
+
 @router.post("/travels/{travel_id}/add_passenger/", response_model=TravelUserPublic, tags=["travels"])
 def add_passenger(travel_id: int, passenger: TravelUserCreate, session: SessionDep):
+    # Создаем запись о пассажире
     db_passenger = TravelUserLink(**passenger.model_dump(), travel_id=travel_id)
     session.add(db_passenger)
+
+    # Получаем запись о поездке с блокировкой для обновления
+    stmt = select(Travel).where(Travel.id == travel_id).with_for_update()
+    result = session.execute(stmt)
+    travel = result.scalar_one_or_none()
+    if not travel:
+        raise HTTPException(status_code=404, detail="Travel not found")
+
+    if travel.current_number_of_available_seats <= 0:
+        raise HTTPException(status_code=400, detail="No available seats")
+
+    # Уменьшаем количество свободных мест
+    travel.current_number_of_available_seats -= 1
+    session.add(travel)
+
+    # Коммитим изменения
     session.commit()
     session.refresh(db_passenger)
     return db_passenger
