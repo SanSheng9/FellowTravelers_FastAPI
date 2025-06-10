@@ -54,7 +54,7 @@ class Travel(SQLModel, table=True):
                              'может быть равна точке прибытия')
         return self
 
-    @model_validator(mode='after')
+    @model_validator(mode='before')
     def set_current_seats(self):
         if self.number_of_available_seats is None:
             raise ValueError("number_of_available_seats не может быть None")
