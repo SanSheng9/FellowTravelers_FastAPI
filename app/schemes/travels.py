@@ -15,6 +15,7 @@ class TravelBase(SQLModel):
     date: datetime = Field(description="Дата поездки")
     status: StatusChoices = StatusChoices.PlANNED
     number_of_available_seats: int = Field(default=0)
+    current_number_of_available_seats: int = Field(default=0)
 
 class TravelUserPublic(SQLModel):
     user_id: int
